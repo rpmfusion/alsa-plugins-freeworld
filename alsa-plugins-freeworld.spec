@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
-Version:        1.0.20
-Release:        4%{?dist}
+Version:        1.0.21
+Release:        1%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -105,6 +105,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Sep  9 2009 kwizart < kwizart at gmail > - 1.0.21-1
+- Update to 1.0.21
+
 * Mon Jul  6 2009 kwizart < kwizart at gmail > - 1.0.20-4
 - Correctly indent the provides
 - Missing %%dir fixing ownership in -lavcrate
