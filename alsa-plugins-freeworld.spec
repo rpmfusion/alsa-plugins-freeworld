@@ -1,5 +1,5 @@
 Name:           alsa-plugins-freeworld
-Version:        1.0.22
+Version:        1.0.23
 Release:        1%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
@@ -105,6 +105,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Oct 19 2010 Nicolas Chauvet <kwizart@gmail.com> - 1.0.23-1
+- Update to 1.0.23
+
 * Sat Jan 16 2010 Nicolas Chauvet <kwizart@fedoraproject.org> - 1.0.22-1
 - Update to 1.0.22
 
