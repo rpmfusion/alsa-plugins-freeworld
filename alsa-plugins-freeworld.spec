@@ -1,5 +1,5 @@
 Name:           alsa-plugins-freeworld
-Version:        1.0.23
+Version:        1.0.24
 Release:        1%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
@@ -11,7 +11,7 @@ Source1:        a52.conf
 Source2:        lavcrate.conf
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  alsa-lib-devel
+BuildRequires:  alsa-lib-devel >= 1.0.24
 
 
 %description
@@ -105,6 +105,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Feb 02 2011 Nicolas Chauvet <kwizart@gmail.com> - 1.0.24-1
+- Update to 1.0.24
+
 * Tue Oct 19 2010 Nicolas Chauvet <kwizart@gmail.com> - 1.0.23-1
 - Update to 1.0.23
 
