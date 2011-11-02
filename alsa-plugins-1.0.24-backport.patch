@@ -1,0 +1,35 @@
+X-Git-Url: http://git.alsa-project.org/?p=alsa-plugins.git;a=blobdiff_plain;f=a52%2Fpcm_a52.c;fp=a52%2Fpcm_a52.c;h=00c7c59f69a07fa013841c490197f09954308f90;hp=ed491b31c32a87a65258524b497d05d6e876fc0b;hb=HEAD;hpb=e153af85698f6e85d0757b69e1ef77f23b67988f
+
+diff --git a/a52/pcm_a52.c b/a52/pcm_a52.c
+index ed491b3..00c7c59 100644
+--- a/a52/pcm_a52.c
++++ b/a52/pcm_a52.c
+@@ -436,6 +436,11 @@ static int a52_prepare(snd_pcm_ioplug_t *io)
+ 	rec->avctx->bit_rate = rec->bitrate * 1000;
+ 	rec->avctx->sample_rate = io->rate;
+ 	rec->avctx->channels = io->channels;
++#if LIBAVCODEC_VERSION_MAJOR > 52 || (LIBAVCODEC_VERSION_MAJOR == 52 && LIBAVCODEC_VERSION_MINOR >= 95)
++  rec->avctx->sample_fmt = AV_SAMPLE_FMT_S16;
++#else
++  rec->avctx->sample_fmt = SAMPLE_FMT_S16;
++#endif
+ #if LIBAVCODEC_VERSION_MAJOR > 52 || (LIBAVCODEC_VERSION_MAJOR == 52 && LIBAVCODEC_VERSION_MINOR >= 3)
+ 	switch (io->channels) {
+ 	case 2:
+@@ -699,8 +704,13 @@ SND_PCM_PLUGIN_DEFINE_FUNC(a52)
+ 
+ 	avcodec_init();
+ 	avcodec_register_all();
+-	rec->codec = avcodec_find_encoder(CODEC_ID_AC3);
+-	if (! rec->codec) {
++
++	rec->codec = avcodec_find_encoder_by_name("ac3_fixed");
++	if (rec->codec == NULL)
++		rec->codec = avcodec_find_encoder_by_name("ac3");
++	if (rec->codec == NULL) 
++		rec->codec = avcodec_find_encoder(CODEC_ID_AC3);
++	if (rec->codec == NULL) {
+ 		SNDERR("Cannot find codec engine");
+ 		err = -EINVAL;
+ 		goto error;
+
