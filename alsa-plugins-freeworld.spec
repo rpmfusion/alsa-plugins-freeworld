@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
 Version:        1.0.24
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -9,6 +9,7 @@ URL:            http://www.alsa-project.org/
 Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.tar.bz2
 Source1:        a52.conf
 Source2:        lavcrate.conf
+Patch0:         alsa-plugins-1.0.24-backport.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  alsa-lib-devel >= 1.0.24
@@ -46,6 +47,7 @@ libavcodec's resampler.
 
 %prep
 %setup -q -n alsa-plugins-%{version}%{?prever}
+%patch0 -p1
 
 %build
 export CPPFLAGS="$(pkg-config --cflags libavcodec)"
@@ -105,6 +107,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Nov 02 2011 Nicolas Chauvet <kwizart@gmail.com> - 1.0.24-3
+- Fix transition to FFmpeg-0.8 - rfbz#2011
+
 * Fri Sep 23 2011 Nicolas Chauvet <kwizart@gmail.com> - 1.0.24-2
 - Rebuild for FFmpeg
 
