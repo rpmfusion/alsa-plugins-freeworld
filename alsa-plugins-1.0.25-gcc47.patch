@@ -1,0 +1,12 @@
+diff -up alsa-plugins-1.0.25/usb_stream/pcm_usb_stream.c.gcc47 alsa-plugins-1.0.25/usb_stream/pcm_usb_stream.c
+--- alsa-plugins-1.0.25/usb_stream/pcm_usb_stream.c.gcc47	2012-01-25 08:57:07.000000000 +0100
++++ alsa-plugins-1.0.25/usb_stream/pcm_usb_stream.c	2012-07-10 23:36:46.803877412 +0200
+@@ -20,6 +20,8 @@
+ 
+ #include <byteswap.h>
+ #define _GNU_SOURCE
++#define __USE_GNU
++#include <unistd.h>
+ #include <sys/mman.h>
+ #include <sys/shm.h>
+ #include <sys/ioctl.h>
