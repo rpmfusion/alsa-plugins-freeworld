@@ -10,6 +10,7 @@ Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.t
 Source1:        a52.conf
 Source2:        lavcrate.conf
 Patch0:         alsa-plugins-1.0.25-gcc47.patch
+Patch1:         alsa-plugins-1.0.25-ffmpeg54.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  alsa-lib-devel >= 1.0.24
@@ -48,6 +49,7 @@ libavcodec's resampler.
 %prep
 %setup -q -n alsa-plugins-%{version}%{?prever}
 %patch0 -p1 -b .gcc47
+%patch1 -p1 -b .ffmpeg54
 
 %build
 export CPPFLAGS="$(pkg-config --cflags libavcodec)"
