@@ -9,6 +9,7 @@ URL:            http://www.alsa-project.org/
 Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.tar.bz2
 Source1:        a52.conf
 Source2:        lavcrate.conf
+Patch1:         alsa-plugins-1.0.25-ffmpeg54.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  alsa-lib-devel >= 1.0.24
@@ -46,6 +47,10 @@ libavcodec's resampler.
 
 %prep
 %setup -q -n alsa-plugins-%{version}%{?prever}
+%if 0%{?fedora} > 17
+%patch1 -p1 -b .ffmpeg54
+%endif
+
 
 %build
 export CPPFLAGS="$(pkg-config --cflags libavcodec)"
