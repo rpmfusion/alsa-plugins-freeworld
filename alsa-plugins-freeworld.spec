@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
 Version:        1.0.26
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -110,6 +110,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun May 26 2013 Nicolas Chauvet <kwizart@gmail.com> - 1.0.26-4
+- Rebuilt for x264/FFmpeg
+
 * Fri May 3 2013 Daniel Ziemba <zman0900@gmail.com> - 1.0.26-3
 - Fix compatibility with libavcodec - rfbz#2648
 
