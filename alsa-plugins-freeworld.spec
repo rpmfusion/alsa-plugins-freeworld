@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
-Version:        1.0.26
-Release:        4%{?dist}
+Version:        1.0.27
+Release:        1%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -9,8 +9,6 @@ URL:            http://www.alsa-project.org/
 Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.tar.bz2
 Source1:        a52.conf
 Source2:        lavcrate.conf
-Patch1:         alsa-plugins-1.0.26-recent-libavcodec-1.patch
-Patch2:         alsa-plugins-1.0.26-recent-libavcodec-2.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  alsa-lib-devel >= 1.0.24
@@ -48,8 +46,6 @@ libavcodec's resampler.
 
 %prep
 %setup -q -n alsa-plugins-%{version}%{?prever}
-%patch1 -p1 -b .patch1
-%patch2 -p1 -b .patch2
 
 
 %build
@@ -75,8 +71,7 @@ rm $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_ctl_arcam_av.so \
   $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_oss.so \
   $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_upmix.so \
   $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_usb_stream.so \
-  $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_vdownmix.so \
-  $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_speex.so || :
+  $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_vdownmix.so || :
 
 # Copying default configuration for a52 and lavcrate modules
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/alsa/pcm
@@ -110,6 +105,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Jun 01 2013 Daniel Ziemba <zman0900@gmail.com> - 1.0.27-1
+- Update to 1.0.27
+
 * Sun May 26 2013 Nicolas Chauvet <kwizart@gmail.com> - 1.0.26-4
 - Rebuilt for x264/FFmpeg
 
