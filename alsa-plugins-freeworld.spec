@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
 Version:        1.0.27
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -105,6 +105,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Dec 07 2013 Nicolas Chauvet <kwizart@gmail.com> - 1.0.27-3
+- Rebuilt for FFmpeg
+
 * Thu Aug 15 2013 Nicolas Chauvet <kwizart@gmail.com> - 1.0.27-2
 - Rebuilt for FFmpeg 2.0.x
 
