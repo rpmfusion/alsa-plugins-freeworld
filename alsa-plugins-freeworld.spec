@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
-Version:        1.0.27
-Release:        5%{?dist}
+Version:        1.0.28
+Release:        1%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -9,7 +9,6 @@ URL:            http://www.alsa-project.org/
 Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.tar.bz2
 Source1:        a52.conf
 Source2:        lavcrate.conf
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  alsa-lib-devel >= 1.0.24
 
@@ -61,7 +60,6 @@ export CPPFLAGS="$(pkg-config --cflags libavcodec)"
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 find $RPM_BUILD_ROOT -name "*.la" -exec rm {} \;
 
@@ -79,12 +77,7 @@ install -pm 0644 %{SOURCE1} %{SOURCE2} \
  $RPM_BUILD_ROOT%{_sysconfdir}/alsa/pcm
 
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-
 %files a52
-%defattr(-,root,root,-)
 %doc COPYING COPYING.GPL
 %doc doc/a52.txt
 %dir %{_sysconfdir}/alsa/pcm
@@ -92,7 +85,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/alsa-lib/libasound_module_pcm_a52.so
 
 %files lavcrate
-%defattr(-,root,root,-)
 %doc COPYING COPYING.GPL
 %doc doc/lavcrate.txt
 %dir %{_sysconfdir}/alsa/pcm
@@ -105,6 +97,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Sep 28 2014 kwizart <kwizart@gmail.com> - 1.0.28-1
+- Update to 1.0.28
+
 * Thu Aug 07 2014 Sérgio Basto <sergio@serjux.com> - 1.0.27-5
 - Rebuilt for ffmpeg-2.3
 
@@ -165,7 +160,7 @@ rm -rf $RPM_BUILD_ROOT
 - Fix per package BuildRequires
 - License is LGPLv2+ for all of theses plugins
 
-* Mon Jun 30 2009 kwizart < kwizart at gmail > - 1.0.20-3
+* Tue Jun 30 2009 kwizart < kwizart at gmail > - 1.0.20-3
 - Split a52 and lavcrate subpackages
 
 * Wed Jun 24 2009 kwizart < kwizart at gmail > - 1.0.20-2
