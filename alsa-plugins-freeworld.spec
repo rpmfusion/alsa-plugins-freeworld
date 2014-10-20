@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
 Version:        1.0.28
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -67,6 +67,7 @@ find $RPM_BUILD_ROOT -name "*.la" -exec rm {} \;
 rm $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_ctl_arcam_av.so \
   $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_ctl_oss.so \
   $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_oss.so \
+  $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_speex.so \
   $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_upmix.so \
   $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_usb_stream.so \
   $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_vdownmix.so || :
@@ -97,6 +98,9 @@ install -pm 0644 %{SOURCE1} %{SOURCE2} \
 
 
 %changelog
+* Mon Oct 20 2014 Sérgio Basto <sergio@serjux.com> - 1.0.28-2
+- Rebuilt for FFmpeg 2.4.3
+
 * Sun Sep 28 2014 kwizart <kwizart@gmail.com> - 1.0.28-1
 - Update to 1.0.28
 
