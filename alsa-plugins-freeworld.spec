@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
-Version:        1.0.28
-Release:        2%{?dist}
+Version:        1.0.29
+Release:        1%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -10,7 +10,7 @@ Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.t
 Source1:        a52.conf
 Source2:        lavcrate.conf
 
-BuildRequires:  alsa-lib-devel >= 1.0.24
+BuildRequires:  alsa-lib-devel >= 1.0.29
 
 
 %description
@@ -98,6 +98,9 @@ install -pm 0644 %{SOURCE1} %{SOURCE2} \
 
 
 %changelog
+* Sun Oct 25 2015 Nicolas Chauvet <kwizart@gmail.com> - 1.0.29-1
+- Update to 1.0.29
+
 * Mon Oct 20 2014 Sérgio Basto <sergio@serjux.com> - 1.0.28-2
 - Rebuilt for FFmpeg 2.4.3
 
