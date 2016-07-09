@@ -1,5 +1,5 @@
 Name:           alsa-plugins-freeworld
-Version:        1.0.29
+Version:        1.1.1
 Release:        1%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
@@ -98,6 +98,9 @@ install -pm 0644 %{SOURCE1} %{SOURCE2} \
 
 
 %changelog
+* Sat Jul 09 2016 Leigh Scott <leigh123linux@googlemail.com> - 1.1.1-1
+- Update to 1.1.1
+
 * Sun Oct 25 2015 Nicolas Chauvet <kwizart@gmail.com> - 1.0.29-1
 - Update to 1.0.29
 
