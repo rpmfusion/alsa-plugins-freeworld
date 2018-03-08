@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
 Version:        1.1.5
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -98,6 +98,9 @@ install -pm 0644 %{SOURCE1} %{SOURCE2} \
 
 
 %changelog
+* Thu Mar 08 2018 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 1.1.5-4
+- Rebuilt for new ffmpeg snapshot
+
 * Wed Feb 28 2018 RPM Fusion Release Engineering <kwizart@rpmfusion.org> - 1.1.5-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
