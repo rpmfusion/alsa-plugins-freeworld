@@ -1,16 +1,15 @@
 Name:           alsa-plugins-freeworld
-Version:        1.1.5
-Release:        4%{?dist}
+Version:        1.1.6
+Release:        1%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
-Group:          System Environment/Libraries
 URL:            http://www.alsa-project.org/
 Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.tar.bz2
-Source1:        a52.conf
-Source2:        lavcrate.conf
+Source1:        50-a52.conf
+Source2:        50-lavcrate.conf
 
-BuildRequires:  alsa-lib-devel >= 1.0.29
+BuildRequires:  alsa-lib-devel >= 1.1.6
 
 
 %description
@@ -22,7 +21,6 @@ This package includes plugins for ALSA that cannot go to Fedora.
 %package a52
 BuildRequires:  ffmpeg-devel
 Summary:        A52 output plugin using libavcodec
-Group:          System Environment/Libraries
 License:        LGPLv2+
 #Compatibility with some foreign packaging scheme
 Provides:       alsa-plugins-a52 = %{version}-%{release}
@@ -34,7 +32,6 @@ audio stream.
 %package lavcrate
 BuildRequires:  ffmpeg-devel
 Summary:        Rate converter plugin using libavcodec
-Group:          System Environment/Libraries
 License:        LGPLv2+
 #Compatibility with some foreign packaging scheme
 Provides:       alsa-plugins-lavcrate = %{version}-%{release}
@@ -57,10 +54,10 @@ export CPPFLAGS="$(pkg-config --cflags libavcodec)"
   --with-speex=no \
   --with-avcodec-includedir="$(pkg-config --cflags libavcodec)"
 
-make %{?_smp_mflags}
+%make_build
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
+%make_install
 find $RPM_BUILD_ROOT -name "*.la" -exec rm {} \;
 
 # Thoses modules will be built by default but we don't want them here.
@@ -73,23 +70,20 @@ rm $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_ctl_arcam_av.so \
   $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_vdownmix.so || :
 
 # Copying default configuration for a52 and lavcrate modules
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/alsa/pcm
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/alsa/conf.d
 install -pm 0644 %{SOURCE1} %{SOURCE2} \
- $RPM_BUILD_ROOT%{_sysconfdir}/alsa/pcm
-
+  $RPM_BUILD_ROOT%{_sysconfdir}/alsa/conf.d
 
 %files a52
-%doc COPYING COPYING.GPL
+%license COPYING COPYING.GPL
 %doc doc/a52.txt
-%dir %{_sysconfdir}/alsa/pcm
-%config(noreplace) %{_sysconfdir}/alsa/pcm/a52.conf
+%config(noreplace) %{_sysconfdir}/alsa/conf.d/50-a52.conf
 %{_libdir}/alsa-lib/libasound_module_pcm_a52.so
 
 %files lavcrate
-%doc COPYING COPYING.GPL
+%license COPYING COPYING.GPL
 %doc doc/lavcrate.txt
-%dir %{_sysconfdir}/alsa/pcm
-%config(noreplace) %{_sysconfdir}/alsa/pcm/lavcrate.conf
+%config(noreplace) %{_sysconfdir}/alsa/conf.d/50-lavcrate.conf
 %{_libdir}/alsa-lib/libasound_module_rate_lavcrate.so
 %{_libdir}/alsa-lib/libasound_module_rate_lavcrate_fast.so
 %{_libdir}/alsa-lib/libasound_module_rate_lavcrate_faster.so
@@ -98,6 +92,9 @@ install -pm 0644 %{SOURCE1} %{SOURCE2} \
 
 
 %changelog
+* Fri Apr 13 2018 Nicolas Chauvet <kwizart@gmail.com> - 1.1.6-1
+- Update to 1.1.6
+
 * Thu Mar 08 2018 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 1.1.5-4
 - Rebuilt for new ffmpeg snapshot
 
