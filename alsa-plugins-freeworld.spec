@@ -1,13 +1,12 @@
 Name:           alsa-plugins-freeworld
 Version:        1.1.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
 URL:            http://www.alsa-project.org/
 Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.tar.bz2
-Source1:        50-a52.conf
-Source2:        50-lavcrate.conf
+Patch0:         plugin-config.patch
 
 BuildRequires:  alsa-lib-devel >= 1.1.6
 
@@ -42,15 +41,21 @@ libavcodec's resampler.
 
 %prep
 %setup -q -n alsa-plugins-%{version}%{?prever}
-
+%patch0 -p1 -b .plugin-config
 
 %build
+autoreconf -vif
 export CPPFLAGS="$(pkg-config --cflags libavcodec)"
 %configure --disable-static \
   --disable-maemo-plugin \
   --disable-jack \
   --disable-pulseaudio \
   --disable-samplerate \
+  --disable-speexdsp \
+  --disable-usbstream \
+  --disable-arcamav \
+  --disable-mix \
+  --disable-oss \
   --with-speex=no \
   --with-avcodec-includedir="$(pkg-config --cflags libavcodec)"
 
@@ -60,30 +65,18 @@ export CPPFLAGS="$(pkg-config --cflags libavcodec)"
 %make_install
 find $RPM_BUILD_ROOT -name "*.la" -exec rm {} \;
 
-# Thoses modules will be built by default but we don't want them here.
-rm $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_ctl_arcam_av.so \
-  $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_ctl_oss.so \
-  $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_oss.so \
-  $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_speex.so \
-  $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_upmix.so \
-  $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_usb_stream.so \
-  $RPM_BUILD_ROOT%{_libdir}/alsa-lib/libasound_module_pcm_vdownmix.so || :
-
-# Copying default configuration for a52 and lavcrate modules
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/alsa/conf.d
-install -pm 0644 %{SOURCE1} %{SOURCE2} \
-  $RPM_BUILD_ROOT%{_sysconfdir}/alsa/conf.d
-
 %files a52
 %license COPYING COPYING.GPL
 %doc doc/a52.txt
-%config(noreplace) %{_sysconfdir}/alsa/conf.d/50-a52.conf
+%dir /etc/alsa/conf.d
+%config(noreplace) %{_sysconfdir}/alsa/conf.d/60-a52-encoder.conf
 %{_libdir}/alsa-lib/libasound_module_pcm_a52.so
 
 %files lavcrate
 %license COPYING COPYING.GPL
 %doc doc/lavcrate.txt
-%config(noreplace) %{_sysconfdir}/alsa/conf.d/50-lavcrate.conf
+%dir /etc/alsa/conf.d
+%config(noreplace) %{_sysconfdir}/alsa/conf.d/10-rate-lavc.conf
 %{_libdir}/alsa-lib/libasound_module_rate_lavcrate.so
 %{_libdir}/alsa-lib/libasound_module_rate_lavcrate_fast.so
 %{_libdir}/alsa-lib/libasound_module_rate_lavcrate_faster.so
@@ -92,6 +85,9 @@ install -pm 0644 %{SOURCE1} %{SOURCE2} \
 
 
 %changelog
+* Fri Apr 13 2018 Jaroslav Kysela <perex@perex.cz> - 1.1.6-2
+- Use plugin config files from upstream, spec cleanups
+
 * Fri Apr 13 2018 Nicolas Chauvet <kwizart@gmail.com> - 1.1.6-1
 - Update to 1.1.6
 
