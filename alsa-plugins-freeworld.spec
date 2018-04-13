@@ -8,6 +8,7 @@ URL:            http://www.alsa-project.org/
 Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.tar.bz2
 Patch0:         plugin-config.patch
 
+BuildRequires:  autoconf automake libtool
 BuildRequires:  alsa-lib-devel >= 1.1.6
 
 
