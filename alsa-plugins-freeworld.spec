@@ -1,12 +1,14 @@
 Name:           alsa-plugins-freeworld
 Version:        1.1.6
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
 URL:            http://www.alsa-project.org/
 Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.tar.bz2
 Patch0:         plugin-config.patch
+# Based on https://patchwork.kernel.org/patch/9753853/
+Patch1:         ffmpeg35_buildfix.patch
 
 BuildRequires:  autoconf automake libtool
 BuildRequires:  alsa-lib-devel >= 1.1.6
@@ -43,6 +45,7 @@ libavcodec's resampler.
 %prep
 %setup -q -n alsa-plugins-%{version}%{?prever}
 %patch0 -p1 -b .plugin-config
+%patch1 -p1 -b .ffmpeg35_buildfix
 
 %build
 autoreconf -vif
@@ -86,6 +89,9 @@ find $RPM_BUILD_ROOT -name "*.la" -exec rm {} \;
 
 
 %changelog
+* Sat Apr 14 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.6-3
+- Fix build
+
 * Fri Apr 13 2018 Jaroslav Kysela <perex@perex.cz> - 1.1.6-2
 - Use plugin config files from upstream, spec cleanups
 
