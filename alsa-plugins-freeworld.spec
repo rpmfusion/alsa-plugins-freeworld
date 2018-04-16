@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
 Version:        1.1.6
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -31,16 +31,14 @@ This plugin converts S16 linear format to A52 compressed stream and
 send to an SPDIF output.  It requires libavcodec for encoding the
 audio stream.
 
-%package lavcrate
+%package lavrate
 BuildRequires:  ffmpeg-devel
 Summary:        Rate converter plugin using libavcodec
 License:        LGPLv2+
 #Compatibility with some foreign packaging scheme
-Provides:       alsa-plugins-lavcrate = %{version}-%{release}
-%description lavcrate
-The plugin in rate-lavc subdirectory is an external rate converter using
-libavcodec's resampler.
-
+Provides:       alsa-plugins-lavrate = %{version}-%{release}
+%description lavrate
+The plugin uses ffmpeg audio resample library to convert audio rates.
 
 %prep
 %setup -q -n alsa-plugins-%{version}%{?prever}
@@ -74,27 +72,37 @@ find $RPM_BUILD_ROOT -name "*.la" -exec rm {} \;
 %doc doc/a52.txt
 %dir /etc/alsa/conf.d
 %config(noreplace) %{_sysconfdir}/alsa/conf.d/60-a52-encoder.conf
+%dir %{_datadir}/alsa/alsa.conf.d
+%{_datadir}/alsa/alsa.conf.d/60-a52-encoder.conf
+%dir %{_libdir}/alsa-lib
 %{_libdir}/alsa-lib/libasound_module_pcm_a52.so
 
-%files lavcrate
+%files lavrate
 %license COPYING COPYING.GPL
-%doc doc/lavcrate.txt
+%doc doc/lavrate.txt
 %dir /etc/alsa/conf.d
-%config(noreplace) %{_sysconfdir}/alsa/conf.d/10-rate-lavc.conf
-%{_libdir}/alsa-lib/libasound_module_rate_lavcrate.so
-%{_libdir}/alsa-lib/libasound_module_rate_lavcrate_fast.so
-%{_libdir}/alsa-lib/libasound_module_rate_lavcrate_faster.so
-%{_libdir}/alsa-lib/libasound_module_rate_lavcrate_high.so
-%{_libdir}/alsa-lib/libasound_module_rate_lavcrate_higher.so
+%config(noreplace) %{_sysconfdir}/alsa/conf.d/10-rate-lav.conf
+%dir %{_datadir}/alsa/alsa.conf.d
+%{_datadir}/alsa/alsa.conf.d/10-rate-lav.conf
+%dir %{_libdir}/alsa-lib
+%{_libdir}/alsa-lib/libasound_module_rate_lavrate.so
+%{_libdir}/alsa-lib/libasound_module_rate_lavrate_fast.so
+%{_libdir}/alsa-lib/libasound_module_rate_lavrate_faster.so
+%{_libdir}/alsa-lib/libasound_module_rate_lavrate_high.so
+%{_libdir}/alsa-lib/libasound_module_rate_lavrate_higher.so
 
 
 %changelog
+* Mon Apr 16 2018 Jaroslav Kysela <perex@perex.cz> - 1.1.6-4
+- Rename alsa-plugins-lavcrate to alsa-plugins-lavrate
+- /etc/alsa/conf.d contains symlinks to /usr/share/alsa/alsa.conf.d templates
+
 * Sat Apr 14 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.6-3
 - Fix build
 
 * Fri Apr 13 2018 Jaroslav Kysela <perex@perex.cz> - 1.1.6-2
 - Use plugin config files from upstream, spec cleanups
-
+7
 * Fri Apr 13 2018 Nicolas Chauvet <kwizart@gmail.com> - 1.1.6-1
 - Update to 1.1.6
 
