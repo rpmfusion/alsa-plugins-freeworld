@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
 Version:        1.1.6
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -37,6 +37,7 @@ Summary:        Rate converter plugin using libavcodec
 License:        LGPLv2+
 #Compatibility with some foreign packaging scheme
 Provides:       alsa-plugins-lavrate = %{version}-%{release}
+Obsoletes:	alsa-plugins-lavcrate < 1.1.6-3
 %description lavrate
 The plugin uses ffmpeg audio resample library to convert audio rates.
 
@@ -93,7 +94,7 @@ find $RPM_BUILD_ROOT -name "*.la" -exec rm {} \;
 
 
 %changelog
-* Mon Apr 16 2018 Jaroslav Kysela <perex@perex.cz> - 1.1.6-4
+* Mon Apr 16 2018 Jaroslav Kysela <perex@perex.cz> - 1.1.6-5
 - Rename alsa-plugins-lavcrate to alsa-plugins-lavrate
 - /etc/alsa/conf.d contains symlinks to /usr/share/alsa/alsa.conf.d templates
 
@@ -102,7 +103,7 @@ find $RPM_BUILD_ROOT -name "*.la" -exec rm {} \;
 
 * Fri Apr 13 2018 Jaroslav Kysela <perex@perex.cz> - 1.1.6-2
 - Use plugin config files from upstream, spec cleanups
-7
+
 * Fri Apr 13 2018 Nicolas Chauvet <kwizart@gmail.com> - 1.1.6-1
 - Update to 1.1.6
 
