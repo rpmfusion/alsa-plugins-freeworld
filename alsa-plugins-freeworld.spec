@@ -1,18 +1,15 @@
 Name:           alsa-plugins-freeworld
-Version:        1.1.6
-Release:        6%{?dist}
+Version:        1.1.7
+Release:        1%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
 URL:            http://www.alsa-project.org/
 Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.tar.bz2
-Patch0:         plugin-config.patch
-# Based on https://patchwork.kernel.org/patch/9753853/
-Patch1:         ffmpeg35_buildfix.patch
 
 BuildRequires:  autoconf automake libtool
-BuildRequires:  alsa-lib-devel >= 1.1.6
-
+BuildRequires:  alsa-lib-devel >= 1.1.7
+BuildRequires:  ffmpeg-devel
 
 %description
 The Advanced Linux Sound Architecture (ALSA) provides audio and MIDI
@@ -21,34 +18,30 @@ functionality to the Linux operating system.
 This package includes plugins for ALSA that cannot go to Fedora.
 
 %package a52
-BuildRequires:  ffmpeg-devel
 Summary:        A52 output plugin using libavcodec
 License:        LGPLv2+
 #Compatibility with some foreign packaging scheme
 Provides:       alsa-plugins-a52 = %{version}-%{release}
+
 %description a52
 This plugin converts S16 linear format to A52 compressed stream and
 send to an SPDIF output.  It requires libavcodec for encoding the
 audio stream.
 
 %package lavrate
-BuildRequires:  ffmpeg-devel
 Summary:        Rate converter plugin using libavcodec
 License:        LGPLv2+
 #Compatibility with some foreign packaging scheme
 Provides:       alsa-plugins-lavrate = %{version}-%{release}
 Obsoletes:	alsa-plugins-lavcrate < 1.1.6-3
+
 %description lavrate
 The plugin uses ffmpeg audio resample library to convert audio rates.
 
 %prep
 %setup -q -n alsa-plugins-%{version}%{?prever}
-%patch0 -p1 -b .plugin-config
-%patch1 -p1 -b .ffmpeg35_buildfix
 
 %build
-autoreconf -vif
-export CPPFLAGS="$(pkg-config --cflags libavcodec)"
 %configure --disable-static \
   --disable-maemo-plugin \
   --disable-jack \
@@ -59,14 +52,13 @@ export CPPFLAGS="$(pkg-config --cflags libavcodec)"
   --disable-arcamav \
   --disable-mix \
   --disable-oss \
-  --with-speex=no \
-  --with-avcodec-includedir="$(pkg-config --cflags libavcodec)"
+  --with-speex=no
 
 %make_build
 
 %install
 %make_install
-find $RPM_BUILD_ROOT -name "*.la" -exec rm {} \;
+find %buildroot -name "*.la" -exec rm {} \;
 
 %files a52
 %license COPYING COPYING.GPL
@@ -94,6 +86,10 @@ find $RPM_BUILD_ROOT -name "*.la" -exec rm {} \;
 
 
 %changelog
+* Sat Oct 20 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.7-1
+- Update to 1.1.7
+- Drop upstreamed patches
+
 * Thu Jul 26 2018 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 1.1.6-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
