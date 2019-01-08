@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
 Version:        1.1.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -33,7 +33,7 @@ Summary:        Rate converter plugin using libavcodec
 License:        LGPLv2+
 #Compatibility with some foreign packaging scheme
 Provides:       alsa-plugins-lavrate = %{version}-%{release}
-Obsoletes:	alsa-plugins-lavcrate < 1.1.6-3
+Obsoletes:	alsa-plugins-lavcrate < 1.1.6-4
 
 %description lavrate
 The plugin uses ffmpeg audio resample library to convert audio rates.
@@ -86,6 +86,9 @@ find %buildroot -name "*.la" -exec rm {} \;
 
 
 %changelog
+* Tue Jan 08 2019 Nicolas Chauvet <kwizart@gmail.com> - 1.1.7-2
+- Bump obsoletes
+
 * Sat Oct 20 2018 Leigh Scott <leigh123linux@googlemail.com> - 1.1.7-1
 - Update to 1.1.7
 - Drop upstreamed patches
