@@ -8,7 +8,7 @@ URL:            http://www.alsa-project.org/
 Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.tar.bz2
 
 BuildRequires:  autoconf automake libtool
-BuildRequires:  alsa-lib-devel >= 1.1.7
+BuildRequires:  alsa-lib-devel >= 1.1.8
 BuildRequires:  ffmpeg-devel
 
 %description
