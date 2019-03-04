@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
 Version:        1.1.8
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -86,6 +86,9 @@ find %buildroot -name "*.la" -exec rm {} \;
 
 
 %changelog
+* Mon Mar 04 2019 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 1.1.8-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Tue Jan 08 2019 Nicolas Chauvet <kwizart@gmail.com> - 1.1.8-1
 - Update to 1.1.8
 
