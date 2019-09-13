@@ -1,0 +1,888 @@
+From e8fabec7adc70220f52588dc170d90d146b92ba7 Mon Sep 17 00:00:00 2001
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Thu, 5 Apr 2018 09:23:09 +0200
+Subject: [PATCH 1/3] samplerate: fix unused variable warning
+
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+---
+ rate/rate_samplerate.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/rate/rate_samplerate.c b/rate/rate_samplerate.c
+index 0b14a59..100d6f2 100644
+--- a/rate/rate_samplerate.c
++++ b/rate/rate_samplerate.c
+@@ -154,14 +154,14 @@ static void pcm_src_close(void *obj)
+ }
+ 
+ #if SND_PCM_RATE_PLUGIN_VERSION >= 0x010002
+-static int get_supported_rates(void *obj, unsigned int *rate_min,
++static int get_supported_rates(void *obj ATTRIBUTE_UNUSED, unsigned int *rate_min,
+ 			       unsigned int *rate_max)
+ {
+ 	*rate_min = *rate_max = 0; /* both unlimited */
+ 	return 0;
+ }
+ 
+-static void dump(void *obj, snd_output_t *out)
++static void dump(void *obj ATTRIBUTE_UNUSED, snd_output_t *out)
+ {
+ 	snd_output_printf(out, "Converter: libsamplerate\n");
+ }
+-- 
+2.13.6
+
+
+From 6e40eb5fd346207021a95d06bc30205a537926ea Mon Sep 17 00:00:00 2001
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Wed, 4 Apr 2018 19:57:56 +0200
+Subject: [PATCH 2/3] configure: add --with-alsaaddondir, add default config
+ files for plugins
+
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+---
+ a52/60-a52-encoder.conf       | 38 ++++++++++++++++++++++++++
+ a52/Makefile.am               |  4 +++
+ a52/pcm_a52.c                 |  2 +-
+ arcam-av/50-arcam-av-ctl.conf | 16 +++++++++++
+ arcam-av/Makefile.am          |  4 +++
+ configure.ac                  | 12 +++++++++
+ jack/50-jack.conf             | 18 +++++++++++++
+ jack/Makefile.am              |  4 +++
+ maemo/98-maemo.conf           | 11 ++++++++
+ maemo/Makefile.am             |  4 +++
+ mix/60-upmix.conf             | 26 ++++++++++++++++++
+ mix/60-vdownmix.conf          | 24 +++++++++++++++++
+ mix/Makefile.am               |  5 +++-
+ oss/50-oss.conf               | 26 ++++++++++++++++++
+ oss/Makefile.am               |  4 +++
+ pph/10-speexrate.conf         | 28 +++++++++++++++++++
+ pph/Makefile.am               |  4 +++
+ pulse/50-pulseaudio.conf      | 15 ++++++-----
+ pulse/Makefile.am             |  4 +--
+ rate-lavc/10-rate-lavc.conf   | 28 +++++++++++++++++++
+ rate-lavc/Makefile.am         |  4 +++
+ rate/10-samplerate.conf       | 28 +++++++++++++++++++
+ rate/Makefile.am              |  4 +++
+ speex/60-speex.conf           | 63 +++++++++++++++++++++++++++++++++++++++++++
+ speex/Makefile.am             |  4 +++
+ usb_stream/98-usb-stream.conf | 27 +++++++++++++++++++
+ usb_stream/Makefile.am        |  4 +++
+ 27 files changed, 401 insertions(+), 10 deletions(-)
+ create mode 100644 a52/60-a52-encoder.conf
+ create mode 100644 arcam-av/50-arcam-av-ctl.conf
+ create mode 100644 jack/50-jack.conf
+ create mode 100644 maemo/98-maemo.conf
+ create mode 100644 mix/60-upmix.conf
+ create mode 100644 mix/60-vdownmix.conf
+ create mode 100644 oss/50-oss.conf
+ create mode 100644 pph/10-speexrate.conf
+ create mode 100644 rate-lavc/10-rate-lavc.conf
+ create mode 100644 rate/10-samplerate.conf
+ create mode 100644 speex/60-speex.conf
+ create mode 100644 usb_stream/98-usb-stream.conf
+
+diff --git a/a52/60-a52-encoder.conf b/a52/60-a52-encoder.conf
+new file mode 100644
+index 0000000..346c94f
+--- /dev/null
++++ b/a52/60-a52-encoder.conf
+@@ -0,0 +1,38 @@
++pcm.a52 {
++	@args [ CARD SLAVE RATE BITRATE CHANNELS ]
++	@args.CARD {
++		type integer
++		default {
++			@func refer
++			name defaults.pcm.card
++		}
++	}
++	@args.SLAVE {
++		type string
++	}
++	@args.RATE {
++		type integer
++		default 48000
++	}
++	@args.BITRATE {
++		type integer
++		default 448
++	}
++	@args.CHANNELS {
++		type string
++		default 6
++	}
++	type a52
++	card $CARD
++	slavepcm $SLAVE
++	rate $RATE
++	bitrate $BITRATE
++	channels $CHANNELS
++	hint {
++		show {
++			@func refer
++			name defaults.namehint.basic
++		}
++                description "Plugin to convert multichannel stream to A52 (AC3) bitstream"
++	}
++}
+diff --git a/a52/Makefile.am b/a52/Makefile.am
+index 48567b4..cbc1497 100644
+--- a/a52/Makefile.am
++++ b/a52/Makefile.am
+@@ -1,6 +1,10 @@
++EXTRA_DIST = 60-a52-encoder.conf
++
+ asound_module_pcm_a52_LTLIBRARIES = libasound_module_pcm_a52.la
++asound_module_addon_DATA = 60-a52-encoder.conf
+ 
+ asound_module_pcm_a52dir = @ALSA_PLUGIN_DIR@
++asound_module_addondir = @ALSA_ADDON_DIR@
+ 
+ AM_CFLAGS = -Wall -g @ALSA_CFLAGS@ @AVCODEC_CFLAGS@ \
+ 	-DAVCODEC_HEADER="@AVCODEC_HEADER@"
+diff --git a/a52/pcm_a52.c b/a52/pcm_a52.c
+index 348d58f..155da36 100644
+--- a/a52/pcm_a52.c
++++ b/a52/pcm_a52.c
+@@ -937,7 +937,7 @@ SND_PCM_PLUGIN_DEFINE_FUNC(a52)
+ 		goto error;
+ 	}
+ 
+-	if (! pcm_string) {
++	if (! pcm_string || pcm_string[0] == '\0') {
+ 		snprintf(devstr, sizeof(devstr),
+ 			 "iec958:{AES0 0x%x AES1 0x%x AES2 0x%x AES3 0x%x %s%s}",
+ 			 IEC958_AES0_CON_EMPHASIS_NONE | IEC958_AES0_NONAUDIO |
+diff --git a/arcam-av/50-arcam-av-ctl.conf b/arcam-av/50-arcam-av-ctl.conf
+new file mode 100644
+index 0000000..b76caa9
+--- /dev/null
++++ b/arcam-av/50-arcam-av-ctl.conf
+@@ -0,0 +1,16 @@
++ctl.arcam_av {
++	@args [ PORT ]
++	@args.PORT {
++		type string
++		default "/dev/ttyUSB0"
++	}
++	type arcam_av
++	port $PORT
++	hint {
++		show {
++			@func refer
++			name defaults.namehint.basic
++		}
++		description "Arcam-AV Amplifier"
++	}
++}
+diff --git a/arcam-av/Makefile.am b/arcam-av/Makefile.am
+index 5c7855f..4a54ccd 100644
+--- a/arcam-av/Makefile.am
++++ b/arcam-av/Makefile.am
+@@ -1,6 +1,10 @@
++EXTRA_DIST = 50-arcam-av-ctl.conf
++
+ asound_module_ctl_arcam_av_LTLIBRARIES = libasound_module_ctl_arcam_av.la
++asound_module_addon_DATA = 50-arcam-av-ctl.conf
+ 
+ asound_module_ctl_arcam_avdir = @ALSA_PLUGIN_DIR@
++asound_module_addondir = @ALSA_ADDON_DIR@
+ 
+ AM_CFLAGS = -Wall -g @ALSA_CFLAGS@
+ AM_LDFLAGS = -module -avoid-version -export-dynamic -no-undefined
+diff --git a/configure.ac b/configure.ac
+index ecc265b..ae98caa 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -206,6 +206,18 @@ AC_DEFINE_UNQUOTED(ALSA_DATA_DIR, "$alsadatadir", [directory containing ALSA dat
+ ALSA_DATA_DIR="$alsadatadir"
+ AC_SUBST(ALSA_DATA_DIR)
+ 
++dnl ALSA add-on config directory
++AC_ARG_WITH(alsaaddondir,
++    AS_HELP_STRING([--with-alsaaddondir=dir],
++	[path where ALSA add-on config files are stored]),
++    alsaaddondir="$withval", alsaaddondir="")
++if test -z "$alsaaddondir"; then
++    alsaaddondir="/etc/alsa/conf.d"
++fi
++AC_DEFINE_UNQUOTED(ALSA_ADDON_DIR, "$alsaaddondir", [directory containing ALSA add-on config files])
++ALSA_ADDON_DIR="$alsaaddondir"
++AC_SUBST(ALSA_ADDON_DIR)
++
+ SAVE_PLUGINS_VERSION
+ 
+ AC_OUTPUT([
+diff --git a/jack/50-jack.conf b/jack/50-jack.conf
+new file mode 100644
+index 0000000..d780dfc
+--- /dev/null
++++ b/jack/50-jack.conf
+@@ -0,0 +1,18 @@
++pcm.jack {
++	type jack
++	playback_ports {
++		0 alsa_pcm:playback_1
++		1 alsa_pcm:playback_2
++	}
++	capture_ports {
++		0 alsa_pcm:capture_1
++		1 alsa_pcm:capture_2
++	}
++	hint {
++		show {
++			@func refer
++			name defaults.namehint.basic
++		}
++		description "JACK Audio Connection Kit"
++	}
++}
+diff --git a/jack/Makefile.am b/jack/Makefile.am
+index f913cb6..0a3d6ae 100644
+--- a/jack/Makefile.am
++++ b/jack/Makefile.am
+@@ -1,6 +1,10 @@
++EXTRA_DIST = 50-jack.conf
++
+ asound_module_pcm_jack_LTLIBRARIES = libasound_module_pcm_jack.la
++asound_module_addon_DATA = 50-jack.conf
+ 
+ asound_module_pcm_jackdir = @ALSA_PLUGIN_DIR@
++asound_module_addondir = @ALSA_ADDON_DIR@
+ 
+ AM_CFLAGS = -Wall -g @ALSA_CFLAGS@ @JACK_CFLAGS@
+ AM_LDFLAGS = -module -avoid-version -export-dynamic -no-undefined $(LDFLAGS_NOUNDEFINED)
+diff --git a/maemo/98-maemo.conf b/maemo/98-maemo.conf
+new file mode 100644
+index 0000000..a9ad6a0
+--- /dev/null
++++ b/maemo/98-maemo.conf
+@@ -0,0 +1,11 @@
++pcm.!default {
++	type alsa_dsp
++	playback_device_file [ "/dev/dsptask/pcm2" ]
++	recording_device_file [ "/dev/dsptask/pcm_rec" ]
++}
++
++ctl.!default {
++	type dsp_ctl
++	playback_devices [ "/dev/dsptask/pcm2" ]
++	recording_devices [ "/dev/dsptask/pcm_rec" ]
++}
+diff --git a/maemo/Makefile.am b/maemo/Makefile.am
+index 2684781..aca481d 100644
+--- a/maemo/Makefile.am
++++ b/maemo/Makefile.am
+@@ -1,8 +1,12 @@
++EXTRA_DIST = 98-maemo.conf
++
+ asound_module_pcm_alsa_dsp_LTLIBRARIES = libasound_module_pcm_alsa_dsp.la
+ asound_module_ctl_dsp_ctl_LTLIBRARIES = libasound_module_ctl_dsp_ctl.la
++asound_module_addon_DATA = 98-maemo.conf
+ 
+ asound_module_pcm_alsa_dspdir = @ALSA_PLUGIN_DIR@
+ asound_module_ctl_dsp_ctldir = @ALSA_PLUGIN_DIR@
++asound_module_addondir = @ALSA_ADDON_DIR@
+ 
+ AM_CFLAGS = -Wall -O2 @ALSA_CFLAGS@ $(DBUS_CFLAGS)
+ AM_LDFLAGS = -module -avoid-version -export-dynamic -no-undefined $(LDFLAGS_NOUNDEFINED)
+diff --git a/mix/60-upmix.conf b/mix/60-upmix.conf
+new file mode 100644
+index 0000000..028cfe1
+--- /dev/null
++++ b/mix/60-upmix.conf
+@@ -0,0 +1,26 @@
++pcm.upmix {
++	@args [ SLAVE CHANNELS DELAY ]
++	@args.SLAVE {
++		type string
++		default "plug:hw"
++	}
++	@args.CHANNELS {
++		type integer
++		default 6
++	}
++	@args.DELAY {
++		type integer
++		default 0
++	}
++	type upmix
++	channels $CHANNELS
++	delay $DELAY
++	slave.pcm $SLAVE
++	hint {
++		show {
++			@func refer
++			name defaults.namehint.basic
++		}
++                description "Plugin for channel upmix (4,6,8)"
++	}
++}
+diff --git a/mix/60-vdownmix.conf b/mix/60-vdownmix.conf
+new file mode 100644
+index 0000000..32e9c56
+--- /dev/null
++++ b/mix/60-vdownmix.conf
+@@ -0,0 +1,24 @@
++pcm.vdownmix {
++	@args [ SLAVE CHANNELS DELAY ]
++	@args.SLAVE {
++		type string
++		default "plug:hw"
++	}
++	@args.CHANNELS {
++		type integer
++		default 6
++	}
++	@args.DELAY {
++		type integer
++		default 0
++	}
++	type vdownmix
++	slave.pcm $SLAVE
++	hint {
++		show {
++			@func refer
++			name defaults.namehint.basic
++		}
++                description "Plugin for channel downmix (stereo) with a simple spacialization"
++	}
++}
+diff --git a/mix/Makefile.am b/mix/Makefile.am
+index e31839a..710606c 100644
+--- a/mix/Makefile.am
++++ b/mix/Makefile.am
+@@ -1,8 +1,12 @@
++EXTRA_DIST = 60-upmix.conf 60-vdownmix.conf
++
+ asound_module_pcm_upmix_LTLIBRARIES = libasound_module_pcm_upmix.la
+ asound_module_pcm_vdownmix_LTLIBRARIES = libasound_module_pcm_vdownmix.la
++asound_module_addon_DATA = 60-upmix.conf 60-vdownmix.conf
+ 
+ asound_module_pcm_upmixdir = @ALSA_PLUGIN_DIR@
+ asound_module_pcm_vdownmixdir = @ALSA_PLUGIN_DIR@
++asound_module_addondir = @ALSA_ADDON_DIR@
+ 
+ AM_CFLAGS = -Wall -g @ALSA_CFLAGS@
+ AM_LDFLAGS = -module -avoid-version -export-dynamic -no-undefined $(LDFLAGS_NOUNDEFINED)
+@@ -11,4 +15,3 @@ libasound_module_pcm_upmix_la_SOURCES = pcm_upmix.c
+ libasound_module_pcm_upmix_la_LIBADD = @ALSA_LIBS@
+ libasound_module_pcm_vdownmix_la_SOURCES = pcm_vdownmix.c
+ libasound_module_pcm_vdownmix_la_LIBADD = @ALSA_LIBS@
+-
+diff --git a/oss/50-oss.conf b/oss/50-oss.conf
+new file mode 100644
+index 0000000..5b2817b
+--- /dev/null
++++ b/oss/50-oss.conf
+@@ -0,0 +1,26 @@
++pcm.oss {
++	@args [ DEVICE ]
++	@args.DEVICE {
++		type string
++		default "/dev/dsp"
++	}
++	type oss
++	port $DEVICE
++	hint {
++		show {
++			@func refer
++			name defaults.namehint.basic
++		}
++		description "Open Sound System"
++	}
++}
++
++ctl.oss {
++	@args [ DEVICE ]
++	@args.DEVICE {
++		type string
++		default "/dev/mixer"
++	}
++	type oss
++	device $DEVICE
++}
+diff --git a/oss/Makefile.am b/oss/Makefile.am
+index 302538b..df83d20 100644
+--- a/oss/Makefile.am
++++ b/oss/Makefile.am
+@@ -1,8 +1,12 @@
++EXTRA_DIST = 50-oss.conf
++
+ asound_module_pcm_oss_LTLIBRARIES = libasound_module_pcm_oss.la
+ asound_module_ctl_oss_LTLIBRARIES = libasound_module_ctl_oss.la
++asound_module_addon_DATA = 50-oss.conf
+ 
+ asound_module_pcm_ossdir = @ALSA_PLUGIN_DIR@
+ asound_module_ctl_ossdir = @ALSA_PLUGIN_DIR@
++asound_module_addondir = @ALSA_ADDON_DIR@
+ 
+ AM_CFLAGS = -Wall -g @ALSA_CFLAGS@
+ AM_LDFLAGS = -module -avoid-version -export-dynamic -no-undefined $(LDFLAGS_NOUNDEFINED)
+diff --git a/pph/10-speexrate.conf b/pph/10-speexrate.conf
+new file mode 100644
+index 0000000..1d9eae9
+--- /dev/null
++++ b/pph/10-speexrate.conf
+@@ -0,0 +1,28 @@
++pcm.speexrate {
++	@args [ SLAVE RATE CONVERTER ]
++	@args.SLAVE {
++		type string
++		default "plug:hw"
++	}
++	@args.RATE {
++		type integer
++		default 48000
++	}
++	@args.CONVERTER {
++		type string
++		default "speexrate"
++	}
++	type rate
++	converter $CONVERTER
++	slave {
++		pcm $SLAVE
++		rate $RATE
++	}
++	hint {
++		show {
++			@func refer
++			name defaults.namehint.basic
++		}
++                description "Rate Converter Plugin Using Speex Resampler"
++	}
++}
+diff --git a/pph/Makefile.am b/pph/Makefile.am
+index 551e5bd..abb950b 100644
+--- a/pph/Makefile.am
++++ b/pph/Makefile.am
+@@ -1,6 +1,10 @@
++EXTRA_DIST = 10-speexrate.conf
++
+ asound_module_rate_speexrate_LTLIBRARIES = libasound_module_rate_speexrate.la
++asound_module_addon_DATA = 10-speexrate.conf
+ 
+ asound_module_rate_speexratedir = @ALSA_PLUGIN_DIR@
++asound_module_addondir = @ALSA_ADDON_DIR@
+ 
+ AM_CFLAGS = -DVAR_ARRAYS -Wall -g @ALSA_CFLAGS@
+ AM_LDFLAGS = -module -avoid-version -export-dynamic -no-undefined $(LDFLAGS_NOUNDEFINED)
+diff --git a/pulse/50-pulseaudio.conf b/pulse/50-pulseaudio.conf
+index dd85dab..62da207 100644
+--- a/pulse/50-pulseaudio.conf
++++ b/pulse/50-pulseaudio.conf
+@@ -1,13 +1,16 @@
+ # Add a specific named PulseAudio pcm and ctl (typically useful for testing)
+ 
+ pcm.pulse {
+-    type pulse
+-    hint {
+-        show on
+-        description "PulseAudio Sound Server"
+-    }
++	type pulse
++	hint {
++		show {
++			@func refer
++			name defaults.namehint.basic
++		}
++		description "PulseAudio Sound Server"
++	}
+ }
+ 
+ ctl.pulse {
+-    type pulse
++	type pulse
+ }
+diff --git a/pulse/Makefile.am b/pulse/Makefile.am
+index a5550b9..835808c 100644
+--- a/pulse/Makefile.am
++++ b/pulse/Makefile.am
+@@ -3,12 +3,12 @@ EXTRA_DIST = 50-pulseaudio.conf 99-pulseaudio-default.conf.example
+ asound_module_pcm_LTLIBRARIES = libasound_module_pcm_pulse.la
+ asound_module_ctl_LTLIBRARIES = libasound_module_ctl_pulse.la
+ asound_module_conf_LTLIBRARIES = libasound_module_conf_pulse.la
+-asound_module_data_DATA = 50-pulseaudio.conf 99-pulseaudio-default.conf.example
++asound_module_addon_DATA = 50-pulseaudio.conf 99-pulseaudio-default.conf.example
+ 
+ asound_module_pcmdir = @ALSA_PLUGIN_DIR@
+ asound_module_ctldir = @ALSA_PLUGIN_DIR@
+ asound_module_confdir = @ALSA_PLUGIN_DIR@
+-asound_module_datadir = @ALSA_DATA_DIR@/alsa.conf.d
++asound_module_addondir = @ALSA_ADDON_DIR@
+ 
+ AM_CFLAGS = -Wall -g @ALSA_CFLAGS@ $(PTHREAD_CFLAGS) $(pulseaudio_CFLAGS) -D_GNU_SOURCE
+ AM_LDFLAGS = -module -avoid-version -export-dynamic -no-undefined $(LDFLAGS_NOUNDEFINED)
+diff --git a/rate-lavc/10-rate-lavc.conf b/rate-lavc/10-rate-lavc.conf
+new file mode 100644
+index 0000000..bab1694
+--- /dev/null
++++ b/rate-lavc/10-rate-lavc.conf
+@@ -0,0 +1,28 @@
++pcm.lavcrate {
++	@args [ SLAVE RATE CONVERTER ]
++	@args.SLAVE {
++		type string
++		default "plug:hw"
++	}
++	@args.RATE {
++		type integer
++		default 48000
++	}
++	@args.CONVERTER {
++		type string
++		default "lavcrate"
++	}
++	type rate
++	converter $CONVERTER
++	slave {
++		pcm $SLAVE
++		rate $RATE
++	}
++	hint {
++		show {
++			@func refer
++			name defaults.namehint.basic
++		}
++                description "Rate Converter Plugin Using AVC Library"
++	}
++}
+diff --git a/rate-lavc/Makefile.am b/rate-lavc/Makefile.am
+index 5cffd44..5f66472 100644
+--- a/rate-lavc/Makefile.am
++++ b/rate-lavc/Makefile.am
+@@ -1,6 +1,10 @@
++EXTRA_DIST = 10-rate-lavc.conf
++
+ asound_module_rate_lavcrate_LTLIBRARIES = libasound_module_rate_lavcrate.la
++asound_module_addon_DATA = 10-rate-lavc.conf
+ 
+ asound_module_rate_lavcratedir = @ALSA_PLUGIN_DIR@
++asound_module_addondir = @ALSA_ADDON_DIR@
+ 
+ AM_CFLAGS = -Wall -g @ALSA_CFLAGS@ @AVCODEC_CFLAGS@ \
+ 	-DAVCODEC_HEADER="@AVCODEC_HEADER@"
+diff --git a/rate/10-samplerate.conf b/rate/10-samplerate.conf
+new file mode 100644
+index 0000000..0d2e604
+--- /dev/null
++++ b/rate/10-samplerate.conf
+@@ -0,0 +1,28 @@
++pcm.samplerate {
++	@args [ SLAVE RATE CONVERTER ]
++	@args.SLAVE {
++		type string
++		default "plug:hw"
++	}
++	@args.RATE {
++		type integer
++		default 48000
++	}
++	@args.CONVERTER {
++		type string
++		default "samplerate"
++	}
++	type rate
++	converter $CONVERTER
++	slave {
++		pcm $SLAVE
++		rate $RATE
++	}
++	hint {
++		show {
++			@func refer
++			name defaults.namehint.basic
++		}
++                description "Rate Converter Plugin Using Samplerate Library"
++	}
++}
+diff --git a/rate/Makefile.am b/rate/Makefile.am
+index 0605bfd..25014d8 100644
+--- a/rate/Makefile.am
++++ b/rate/Makefile.am
+@@ -1,6 +1,10 @@
++EXTRA_DIST = 10-samplerate.conf
++
+ asound_module_rate_samplerate_LTLIBRARIES = libasound_module_rate_samplerate.la
++asound_module_addon_DATA = 10-samplerate.conf
+ 
+ asound_module_rate_sampleratedir = @ALSA_PLUGIN_DIR@
++asound_module_addondir = @ALSA_ADDON_DIR@
+ 
+ AM_CFLAGS = -Wall -g @ALSA_CFLAGS@ $(samplerate_CFLAGS)
+ AM_LDFLAGS = -module -avoid-version -export-dynamic -no-undefined $(LDFLAGS_NOUNDEFINED)
+diff --git a/speex/60-speex.conf b/speex/60-speex.conf
+new file mode 100644
+index 0000000..bf2ce95
+--- /dev/null
++++ b/speex/60-speex.conf
+@@ -0,0 +1,63 @@
++pcm.speex {
++	@args [ SLAVE AGC AGC_LEVEL DENOISE ECHO
++                DEREVERB DEREVERB_DECAY DEREVERB_LEVEL
++                FRAMES FILTER_LENGTH ]
++	@args.SLAVE {
++		type string
++		default "plug:hw"
++	}
++	@args.AGC {
++		type string
++		default off
++	}
++	@args.AGC_LEVEL {
++		type integer
++		default 8000
++	}
++	@args.DENOISE {
++		type string
++		default on
++	}
++	@args.ECHO {
++		type string
++		default off
++	}
++	@args.DEREVERB {
++		type string
++		default off
++	}
++	@args.DEREVERB_DECAY {
++		type real
++		default 0
++	}
++	@args.DEREVERB_LEVEL {
++		type real
++		default 0
++	}
++	@args.FRAMES {
++		type integer
++		default 64
++	}
++	@args.FILTER_LENGTH {
++		type integer
++		default 256
++	}
++	type speex
++	agc $AGC
++	agc_level $AGC_LEVEL
++	denoise $DENOISE
++	echo $ECHO
++	dereverb $DEREVERB
++	dereverb_decay $DEREVERB_DECAY
++	dereverb_level $DEREVERB_LEVEL
++	frames $FRAMES
++	filter_length $FILTER_LENGTH
++	slave.pcm $SLAVE
++	hint {
++		show {
++			@func refer
++			name defaults.namehint.basic
++		}
++                description "Plugin using Speex DSP (resample, agc, denoise, echo, dereverb)"
++	}
++}
+diff --git a/speex/Makefile.am b/speex/Makefile.am
+index 7d84190..7891954 100644
+--- a/speex/Makefile.am
++++ b/speex/Makefile.am
+@@ -1,6 +1,10 @@
++EXTRA_DIST = 60-speex.conf
++
+ asound_module_pcm_speex_LTLIBRARIES = libasound_module_pcm_speex.la
++asound_module_addon_DATA = 60-speex.conf
+ 
+ asound_module_pcm_speexdir = @ALSA_PLUGIN_DIR@
++asound_module_addondir = @ALSA_ADDON_DIR@
+ 
+ AM_CFLAGS = -Wall -g @ALSA_CFLAGS@ @speexdsp_CFLAGS@
+ AM_LDFLAGS = -module -avoid-version -export-dynamic -no-undefined $(LDFLAGS_NOUNDEFINED)
+diff --git a/usb_stream/98-usb-stream.conf b/usb_stream/98-usb-stream.conf
+new file mode 100644
+index 0000000..2efc95f
+--- /dev/null
++++ b/usb_stream/98-usb-stream.conf
+@@ -0,0 +1,27 @@
++pcm.usbstream {
++	@args [ CARD RATE PERIOD_SIZE ]
++	@args.CARD {
++		type string
++		default {
++			func refer
++			name defaults.pcm.card
++		}
++	}
++	@args.RATE {
++		type integer
++	}
++	@args.PERIOD_SIZE {
++		type integer
++	}
++	type usb_stream
++	card $CARD
++	rate $RATE
++	period_size $PERIOD_SIZE
++	hint {
++		show {
++			@func refer
++			name defaults.namehint.basic
++		}
++                description "USB Stream Output"
++	}
++}
+diff --git a/usb_stream/Makefile.am b/usb_stream/Makefile.am
+index 50a98a0..b606d3d 100644
+--- a/usb_stream/Makefile.am
++++ b/usb_stream/Makefile.am
+@@ -1,6 +1,10 @@
++EXTRA_DIST = 98-usb-stream.conf
++
+ asound_module_pcm_usb_stream_LTLIBRARIES = libasound_module_pcm_usb_stream.la
++asound_module_addon_DATA = 98-usb-stream.conf
+ 
+ asound_module_pcm_usb_streamdir = @ALSA_PLUGIN_DIR@
++asound_module_addondir = @ALSA_ADDON_DIR@
+ 
+ AM_CFLAGS = -Wall -g @ALSA_CFLAGS@
+ AM_LDFLAGS = -module -avoid-version -export-dynamic $(LDFLAGS_NOUNDEFINED)
+-- 
+2.13.6
+
+
+From cc6bed233a3167d806834460befca2c6d655f0fb Mon Sep 17 00:00:00 2001
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Fri, 13 Apr 2018 13:37:36 +0200
+Subject: [PATCH 3/3] config/Makefile: make everything modular
+
+Signed-off-by: Jaroslav Kysela <perex@perex.cz>
+---
+ Makefile.am     | 21 ++++++++++++++++++---
+ configure.ac    | 20 +++++++++++++++++++-
+ doc/Makefile.am | 37 ++++++++++++++++++++++++++++++++++---
+ 3 files changed, 71 insertions(+), 7 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 69cfe0d..303bc83 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,4 +1,10 @@
+-SUBDIRS = oss mix usb_stream arcam-av doc
++SUBDIRS = doc
++if HAVE_OSS
++SUBDIRS += oss
++endif
++if HAVE_MIX
++SUBDIRS += mix
++endif
+ if HAVE_JACK
+ SUBDIRS += jack
+ endif
+@@ -8,8 +14,17 @@ endif
+ if HAVE_SAMPLERATE
+ SUBDIRS += rate
+ endif
+-if HAVE_AVCODEC
+-SUBDIRS += a52 rate-lavc
++if HAVE_A52
++SUBDIRS += a52
++endif
++if HAVE_AVCRATE
++SUBDIRS += rate-lavc
++endif
++if HAVE_USBSTREAM
++SUBDIRS += usb_stream
++endif
++if HAVE_ARCAMAV
++SUBDIRS += arcam-av
+ endif
+ if HAVE_MAEMO_PLUGIN
+ SUBDIRS += maemo
+diff --git a/configure.ac b/configure.ac
+index ae98caa..2d7e6aa 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -135,6 +135,22 @@ AC_SUBST(AVCODEC_CFLAGS)
+ AC_SUBST(AVCODEC_LIBS)
+ AC_SUBST(AVCODEC_HEADER)
+ 
++AC_ARG_ENABLE([a52],
++      AS_HELP_STRING([--disable-a52], [Disable building of A52 encoder plugin]))
++
++if test "x$enable_a52" != "xno" -a "$HAVE_AVCODEC" = "yes"; then
++  HAVE_A52=yes
++fi
++AM_CONDITIONAL(HAVE_A52, test x$HAVE_A52 = xyes)
++
++AC_ARG_ENABLE([avcrate],
++      AS_HELP_STRING([--disable-avcrate], [Disable building of AVC rate plugin]))
++
++if test "x$enable_avcrate" != "xno" -a "$HAVE_AVCODEC" = "yes"; then
++  HAVE_AVCRATE=yes
++fi
++AM_CONDITIONAL(HAVE_AVCRATE, test x$HAVE_AVCRATE = xyes)
++
+ AC_ARG_ENABLE([speexdsp],
+       AS_HELP_STRING([--disable-speexdsp], [Disable building of speexdsp plugin]))
+ 
+@@ -260,12 +276,14 @@ if test "$HAVE_SAMPLERATE" = "yes"; then
+ fi
+ echo "Maemo plugin:       $HAVE_MAEMO_PLUGIN"
+ echo "  Using Osso resource manager: $use_maemo_rm"
+-echo "A52, lavc plugins:  $HAVE_AVCODEC"
+ if test "$HAVE_AVCODEC" = "yes"; then
++  echo "AVCodec config:"
+   echo "  AVCODEC_CFLAGS: $AVCODEC_CFLAGS"
+   echo "  AVCODEC_LIBS: $AVCODEC_LIBS"
+   echo "  AVCODEC_HEADER: $AVCODEC_HEADER"
+ fi
++echo "A52 plugin:         $HAVE_A52"
++echo "AVC rate plugin:    $HAVE_AVCRATE"
+ echo "Speex rate plugin:  $PPH"
+ echo "Speex preprocess plugin:  $HAVE_SPEEXDSP"
+ if test "$HAVE_SPEEX" = "yes"; then
+diff --git a/doc/Makefile.am b/doc/Makefile.am
+index 19fa0d2..0d6f6e5 100644
+--- a/doc/Makefile.am
++++ b/doc/Makefile.am
+@@ -1,4 +1,35 @@
+-EXTRA_DIST = README-pcm-oss README-jack README-pulse README-maemo \
+-	upmix.txt vdownmix.txt samplerate.txt a52.txt lavcrate.txt \
+-	speexrate.txt speexdsp.txt README-arcam-av
++EXTRA_DIST =
+ 
++if HAVE_OSS
++EXTRA_DIST += README-pcm-oss
++endif
++if HAVE_MIX
++EXTRA_DIST += upmix.txt vdownmix.txt
++endif
++if HAVE_JACK
++EXTRA_DIST += README-jack
++endif
++if HAVE_PULSE
++EXTRA_DIST += README-pulse
++endif
++if HAVE_MAEMO_PLUGIN
++EXTRA_DIST += README-maemo
++endif
++if HAVE_SAMPLERATE
++EXTRA_DIST += samplerate.txt
++endif
++if HAVE_A52
++EXTRA_DIST += a52.txt
++endif
++if HAVE_AVCRATE
++EXTRA_DIST += lavcrate.txt
++endif
++if HAVE_PPH
++EXTRA_DIST += speexrate.txt
++endif
++if HAVE_SPEEXDSP
++EXTRA_DIST += speexdsp.txt
++endif
++if HAVE_ARCAMAV
++EXTRA_DIST += README-arcam-av
++endif
+-- 
+2.13.6
+
