@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
 Version:        1.1.6
-Release:        6%{?dist}
+Release:        5%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -94,9 +94,6 @@ find $RPM_BUILD_ROOT -name "*.la" -exec rm {} \;
 
 
 %changelog
-* Thu Jul 26 2018 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 1.1.6-6
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
-
 * Mon Apr 16 2018 Jaroslav Kysela <perex@perex.cz> - 1.1.6-5
 - Rename alsa-plugins-lavcrate to alsa-plugins-lavrate
 - /etc/alsa/conf.d contains symlinks to /usr/share/alsa/alsa.conf.d templates
