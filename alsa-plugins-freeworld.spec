@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
-Version:        1.1.8
-Release:        1%{?dist}
+Version:        1.1.7
+Release:        2%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -86,9 +86,6 @@ find %buildroot -name "*.la" -exec rm {} \;
 
 
 %changelog
-* Tue Jan 08 2019 Nicolas Chauvet <kwizart@gmail.com> - 1.1.8-1
-- Update to 1.1.8
-
 * Tue Jan 08 2019 Nicolas Chauvet <kwizart@gmail.com> - 1.1.7-2
 - Bump obsoletes
 
