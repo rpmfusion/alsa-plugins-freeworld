@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
-Version:        1.1.9
-Release:        2%{?dist}
+Version:        1.2.1
+Release:        1%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -63,7 +63,7 @@ find %buildroot -name "*.la" -exec rm {} \;
 %files a52
 %license COPYING COPYING.GPL
 %doc doc/a52.txt
-%dir /etc/alsa/conf.d
+%dir %{_sysconfdir}/alsa/conf.d
 %config(noreplace) %{_sysconfdir}/alsa/conf.d/60-a52-encoder.conf
 %dir %{_datadir}/alsa/alsa.conf.d
 %{_datadir}/alsa/alsa.conf.d/60-a52-encoder.conf
@@ -73,7 +73,7 @@ find %buildroot -name "*.la" -exec rm {} \;
 %files lavrate
 %license COPYING COPYING.GPL
 %doc doc/lavrate.txt
-%dir /etc/alsa/conf.d
+%dir %{_sysconfdir}/alsa/conf.d
 %config(noreplace) %{_sysconfdir}/alsa/conf.d/10-rate-lav.conf
 %dir %{_datadir}/alsa/alsa.conf.d
 %{_datadir}/alsa/alsa.conf.d/10-rate-lav.conf
@@ -86,6 +86,9 @@ find %buildroot -name "*.la" -exec rm {} \;
 
 
 %changelog
+* Mon Nov 18 2019 Leigh Scott <leigh123linux@googlemail.com> - 1.2.1-1
+- Updated to 1.2.1
+
 * Tue Aug 06 2019 Leigh Scott <leigh123linux@gmail.com> - 1.1.9-2
 - Rebuild for new ffmpeg version
 
