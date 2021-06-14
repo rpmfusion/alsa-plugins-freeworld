@@ -1,11 +1,11 @@
 Name:           alsa-plugins-freeworld
-Version:        1.2.2
-Release:        4%{?dist}
+Version:        1.2.5
+Release:        1%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
 URL:            http://www.alsa-project.org/
-Source0:        ftp://ftp.alsa-project.org/pub/plugins/alsa-plugins-%{version}.tar.bz2
+Source0:        https://www.alsa-project.org/files/pub/plugins/alsa-plugins-%{version}.tar.bz2
 
 BuildRequires:  autoconf automake libtool
 BuildRequires:  alsa-lib-devel >= 1.1.8
@@ -86,6 +86,9 @@ find %buildroot -name "*.la" -exec rm {} \;
 
 
 %changelog
+* Mon Jun 14 2021 Leigh Scott <leigh123linux@gmail.com> - 1.2.5-1
+- Updated to 1.2.5
+
 * Wed Feb 03 2021 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 1.2.2-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
