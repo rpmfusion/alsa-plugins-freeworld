@@ -1,11 +1,12 @@
 Name:           alsa-plugins-freeworld
 Version:        1.2.5
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
 URL:            http://www.alsa-project.org/
 Source0:        https://www.alsa-project.org/files/pub/plugins/alsa-plugins-%{version}.tar.bz2
+Patch0:		alsa-git.patch
 
 BuildRequires:  autoconf automake libtool
 BuildRequires:  alsa-lib-devel >= 1.1.8
@@ -40,6 +41,7 @@ The plugin uses ffmpeg audio resample library to convert audio rates.
 
 %prep
 %setup -q -n alsa-plugins-%{version}%{?prever}
+%patch0 -p1 -b .alsa-git
 
 %build
 %configure --disable-static \
@@ -86,6 +88,9 @@ find %buildroot -name "*.la" -exec rm {} \;
 
 
 %changelog
+* Tue Nov  9 2021 Jaroslav Kysela <perex@perex.cz> - 1.2.5-3
+- Updated to latest ALSA git (use libswresample)
+
 * Mon Aug 02 2021 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 1.2.5-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
