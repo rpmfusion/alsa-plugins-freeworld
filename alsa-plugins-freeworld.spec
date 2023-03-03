@@ -1,6 +1,6 @@
 Name:           alsa-plugins-freeworld
 Version:        1.2.7.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The ALSA Plugins - freeworld version
 # All packages are LGPLv2+ with the exception of samplerate which is GPLv2+
 License:        LGPLv2+
@@ -86,6 +86,9 @@ find %buildroot -name "*.la" -exec rm {} \;
 
 
 %changelog
+* Fri Mar 03 2023 Leigh Scott <leigh123linux@gmail.com> - 1.2.7.1-2
+- Rebuild for new ffmpeg
+
 * Wed Nov 16 2022 Leigh Scott <leigh123linux@gmail.com> - 1.2.7.1-1
 - Updated to 1.2.7.1
 
